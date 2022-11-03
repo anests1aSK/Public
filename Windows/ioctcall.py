@@ -46,7 +46,7 @@ FILE_ATTRIBUTE_NORMAL = 0x80
 
 
 def opendevice(dev):
-    # open the device
+   
     hdev = CreateFileA(dev, GENERIC_READ | GENERIC_WRITE,
                        FILE_SHARE_READ | FILE_SHARE_WRITE, None, OPEN_EXISTING,
                        FILE_ATTRIBUTE_NORMAL, None)
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         if arg == "-":
             return sys.stdin.read().encode()
         return bytes.fromhex(arg)
-
+    # Argumentos que se le pasan
     ap = argparse.ArgumentParser()
     ap.add_argument('-d', '--device', required=True, help="Device to open",
                     type=lambda x: x.encode())
