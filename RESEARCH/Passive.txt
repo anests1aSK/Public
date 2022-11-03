@@ -1,0 +1,17 @@
+MALTEGO CE.
+OSINT FRAMEWORK.
+nslookup.
+dig.
+recon-ng.
+theHarvester.
+FOCA. //Metadata files.
+:::::::::::::::::::::::::::::::::::::::::::::Censys:::::::::::::::::::::::::::::
+
+WEB certificates:
+((domain.name) AND tags.raw: "leaf") AND tags.raw: "expired"
+parsed.names: domain-name AND parsed.subject_key_info.rsa_public_key.length: [ 0 TO 2047 ]
+services.tls.certificates.leaf_data.subject.common_name
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+Shodan.
+http://web.archive.org/

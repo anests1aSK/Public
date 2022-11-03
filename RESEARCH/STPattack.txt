@@ -1,0 +1,28 @@
+En una red segmentada con varios switch conectados se usa STP layer 2. Sirve para prevenir los looping en las redes que tienen rutas reduntantes poniendo un switch port en forwarding mode (modo reenvio) y todos los demas puertos en la misma red se ponen en modo bloqueo.
+
+Existen 3 diferentes formas de STP
+
+STP Spanning Tree Protocol /comun
+
+RSTP Rapid Spanning Tree Protocol /la diferencia que es mas rapido que STP
+
+MST Multiple Spanning Tree  /se usa para VLAN
+
+STP ayuda a monitorea la topologia de la red y optimizar las rutas de transmicion de los frames de Ethernet, removiendo enlaces redundantes y estableciendo un link preferido entre switches.
+
+El link preferido es el de mayor ancho de banda y se usa hasta fallar hasta, en este punto se pasa un link que no es de preferencia para tomar el control del trafico.
+
+Root bridge: es el punto de referencia  por todos los switches en STP. los switches almacenan a un Bridge ID donde el switch con el ID mas bajo sera elegido para ser el root Bridge. El bridge ID se crea con un numero de prioridad y la MAC address. El default priority ID en muchos switch es el 32768 y el valor si no es el default tiene que ser multiplo de 4096.
+
+Durante la eleccion la prioridad ID se compara con otro switch, si el priority ID es el mismo que otro ID entonces se compara la MAC address.
+
+Layer 2 de los switches estan dise;ados para inundar de frames con la direccion broadcast a todos los demas switches si no encuentran esa MAC en tu tabla MAC.
+
+STP previene "broadcast storms" causada por los bucles de red, donde una trama rebota de un lado a otro entre los switches debido a las rutas redundantes.
+
+La eliminacion de los loops redundantes previenen la replicacion de tablas MAC cual causa que dos diferentes puertos en un switch transmiten la misma MAC address.
+
+Con wireshark podemos capturar paquetes STP, del protocolo Bridge Protocol Data Units (BPDUs)  que determinan si un puerto esta bloqueado o modo reenvio y determinar el root bridge durante la eleccion de procesos, este se repite cuando hay una falla en la red. Para la version STP ID es igual a 0 y el ID 3 es igual a RSTP/MST.
+
+Si STP no usa un proceso de autenticacion pordiamos craftear
+un BPDUs con un switch inexistente para elegirlo con un nuevo root bridge, repetir este paso una y otra vez causariamos que la LAN estaria en constante eleccion de proceso de el bridge root, saturando la reed con frames ethernet causando un "broadcast storm"

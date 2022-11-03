@@ -1,0 +1,45 @@
+formula para llegar a las importaciones dll x32 
+
+VA = virtual address
+RVA = Relative virtual address = VA - ImageBase
+
+offset = imageBase + text.RawOffset+ (importDirectory.RVA - text.VA)
+
+Con una herramienta como CFF Explorer podriamos buscar los valores.
+
+text.RawOffset = RawAddress
+
+fileBase = 0x0
+textRawOffset = 0x00000400
+importDirectoryRVA = 0x0000A0A0
+textVA = 0x00001000
+
+
+este seria el file offset para  PIMAGE_IMPORT_DESCRIPTOR
+94a0
+
+Si no se logra encontrar con esta tendria que buscar el offset de la primera dll cargada supongamos,
+ADVAPI32, tendriamos que buscar el Name RVA y la formula seria,
+
+offset = imageBase + text.RawOffset+ (Name.RVA - text.VA)
+
+Name.RVA = 0x0000A27C
+
+Ahora nuestro offset seria : 967c
+
+Para importar las funciones tendriamos que usar PIMAGE_THUNK_DATA32 para usarla tendriamos que traducir
+un RVA mas este seria le primer thunk o OFTs(OriginalFirstThunk) miembro de PIMAGE_IMPORT_DESCRIPTOR, tambien usariamos la misma formula.
+
+Supongamos que nos dio un offset 968c
+
+Entonces seria 968c+4 por como esta dise;ada la estructura PIMAGE_THUNK_DATA32
+
+supongamos que el texto binario DWORD encontrado en esa direccion seria A2A60000, ya que estamos en x86 un ultimo RVA seria 
+
+offset = imageBase + text.RawOffset+ (0xa6a2 - text.VA)
+
+Con una aplicacion para ver binarios veriamos que con el offset tendriamos la primera funcion,
+
+
+
+
