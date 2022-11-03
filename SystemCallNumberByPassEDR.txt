@@ -1,0 +1,29 @@
+https://j00ru.vexillium.org/syscalls/nt/64/
+
+Ya que los EDR estan hookeados a los binarios, se pueden pasar llamando directamente a las mediante su numero de llamada. Aunque esto es emborroso hay otra forma.
+
+Los EDR no pueden hhacer un hook en modo kernel por que existe KPP(Kernel patch protection)
+que tira un BSOD si se realizo algun hook.(Por ahora)
+para saltar el hook EDR de podriamos hacer un print a una biblioteca que pasa a modo kernel cuando la llamamos.
+NtReadVirtualMemory, ReadProcessMemory y buscar el hook
+
+printf("RPM: %p =======  RVM:%p\n", ReadProcessMemory, NtReadVirtualMemory)
+
+Pero no es una función exportada dentro de ntdll y, por lo tanto, no puede simplemente hacer referencia a la función como de costumbre. Tenemos que vincular ntdll a nuestro proyecto.
+
+#pragma comment (lib, "ntdll.lib")
+
+EXTERN_C NTSTATUS NTAPI NtReadVirtualMemory(HANDLE, PVOID, PVOID, ULONG, PULONG);
+
+Una vez que obtengamos las direcciones de memoria y usemos un poco de reverse. En NtReadVirtualMemory notaremos que hay un jmp a una dll llamada CyMemdef64.dll
+
+Hay dos soluciones la primera reparchear el salto (jmp) para que EDR nunca se ejecute
+
+Tambien podriamos crear nuestra propia funcion, similar a lo que estamos haciendo en Patch, pero en lugar de sobrescribir la funcion hookeada, la recrearemos en otro lugar. Luego, recorreremos la tabla de direcciones de importación de Ntdll, cambiaremos el puntero por NtReadVirtualMemory y lo apuntaremos a nuestra nueva fixed_NtReadVirtualMemory. La ventaja de este metodo es que si el EDR decide verificar su hook, parecera que no ha sido modificado. Simplemente nunca se llama y el IAT ntdll se apunta a otra parte.
+
+
+::::::::::::::::::::::::::::::::::::::::: Esto es para un EDR especifico no significa que no funcione para todos los EDR :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+Podriamos cambiar los servidores DNS para que se eviten las alertas para poder pasar tranquilamentes los EDR
+
+Existe la herramienta https://github.com/CCob/SharpBlock para ETW y AMSI 
