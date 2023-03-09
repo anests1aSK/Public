@@ -53,8 +53,7 @@ GetProcAddress.restype = LPVOID
 GetProcAddress.argtypes = [LPVOID, LPCSTR]
 LoadLibraryA.restype = LPVOID
 LoadLibraryA.argtypes = [LPCSTR]
-CreateFileA.restype = HANDLE
-D
+CreateFileA.restype = HANDLED
 CreateFileA.argtypes = [LPCSTR, DWORD, DWORD, LPVOID, DWORD, DWORD, HANDLE]
 CreateFileA.errcheck = errcheck_createfile
 DeviceIoControl.restype = BOOL
