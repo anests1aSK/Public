@@ -251,7 +251,7 @@ load_binary_bfd(std::string &fname, Binary *bin, Binary::BinaryType type)
     goto fail;
   }
 
-  /* Symbol handling is best-effort only (they may not even be present) */
+ 
   load_symbols_bfd(bfd_h, bin);
   load_dynsym_bfd(bfd_h, bin);
 
